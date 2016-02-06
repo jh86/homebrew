@@ -1,14 +1,15 @@
 class Awscli < Formula
   desc "Official Amazon AWS command-line interface"
   homepage "https://aws.amazon.com/cli/"
-  url "https://pypi.python.org/packages/source/a/awscli/awscli-1.7.32.tar.gz"
-  sha256 "50f914d752700c47e6567d1f17ee64c8d5efbe1974da46c03cf7d85e080f71b5"
+  url "https://pypi.python.org/packages/source/a/awscli/awscli-1.10.1.tar.gz"
+  mirror "https://github.com/aws/aws-cli/archive/1.10.1.tar.gz"
+  sha256 "6b738f7fc6af7ab9c759b7efb5decde71970990061b2df169b14bec89c452c95"
 
   bottle do
-    cellar :any
-    sha256 "26fbc4082457d9e3379740c14da5e6283978f1b475d6c9a2b55720b595948b90" => :yosemite
-    sha256 "6120544ffc32eb298c0f95350d0ff6cb2e541028fa1e86f4c5d511647d380ac1" => :mavericks
-    sha256 "bc6d694da65caeda5738782841b41feb5c660acc224573c44dbac1d5c585d2d7" => :mountain_lion
+    cellar :any_skip_relocation
+    sha256 "b9fb18aa7f4693780933959f8e6ac2cff4a68cd95c921cb950612024aded812b" => :el_capitan
+    sha256 "6ccdd59face0fa79bb94e527e3c12e64143ca131c282ef1de5dea18511c0a90b" => :yosemite
+    sha256 "76016e295cd2d8d67f8a1267ce763bd1b47010239902093c45e0f75b06f9149d" => :mavericks
   end
 
   head do
@@ -16,10 +17,6 @@ class Awscli < Formula
 
     resource "botocore" do
       url "https://github.com/boto/botocore.git", :branch => "develop"
-    end
-
-    resource "bcdoc" do
-      url "https://github.com/boto/bcdoc.git", :branch => "develop"
     end
 
     resource "jmespath" do
@@ -32,8 +29,8 @@ class Awscli < Formula
   depends_on :python if MacOS.version <= :lion
 
   resource "six" do
-    url "https://pypi.python.org/packages/source/s/six/six-1.9.0.tar.gz"
-    sha1 "d168e6d01f0900875c6ecebc97da72d0fda31129"
+    url "https://pypi.python.org/packages/source/s/six/six-1.10.0.tar.gz"
+    sha256 "105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a"
   end
 
   resource "python-dateutil" do
@@ -47,33 +44,28 @@ class Awscli < Formula
   end
 
   resource "jmespath" do
-    url "https://pypi.python.org/packages/source/j/jmespath/jmespath-0.7.1.tar.gz"
-    sha1 "10cbbf7f1a892d2c4fce7f7e84bb91e9108fcf45"
+    url "https://pypi.python.org/packages/source/j/jmespath/jmespath-0.9.0.tar.gz"
+    sha256 "08dfaa06d4397f283a01e57089f3360e3b52b5b9da91a70e1fd91e9f0cdd3d3d"
   end
 
   resource "botocore" do
-    url "https://pypi.python.org/packages/source/b/botocore/botocore-1.0.0b1.tar.gz"
-    sha256 "c4665a00dad68bfdfda02df9cad7b93bb391430c043f01261a964f86fa1b41eb"
+    url "https://pypi.python.org/packages/source/b/botocore/botocore-1.3.23.tar.gz"
+    sha256 "d2e067bdb3e9b5c26821efc8517a9ced4f9d5f4cd30de14585ed1fe0eb552a02"
   end
 
   resource "docutils" do
     url "https://pypi.python.org/packages/source/d/docutils/docutils-0.12.tar.gz"
-    sha1 "002450621b33c5690060345b0aac25bc2426d675"
-  end
-
-  resource "bcdoc" do
-    url "https://pypi.python.org/packages/source/b/bcdoc/bcdoc-0.14.0.tar.gz"
-    sha256 "68aecc8e14151266316562c6a50605b8efa33f18f8023e303fb20a1b346e53e8"
+    sha256 "c7db717810ab6965f66c8cf0398a98c9d8df982da39b4cd7f162911eb89596fa"
   end
 
   resource "pyasn1" do
-    url "https://pypi.python.org/packages/source/p/pyasn1/pyasn1-0.1.7.tar.gz"
-    sha1 "e32b91c5a5d9609fb1d07d8685a884bab22ca6d0"
+    url "https://pypi.python.org/packages/source/p/pyasn1/pyasn1-0.1.9.tar.gz"
+    sha256 "853cacd96d1f701ddd67aa03ecc05f51890135b7262e922710112f12a2ed2a7f"
   end
 
   resource "rsa" do
-    url "https://pypi.python.org/packages/source/r/rsa/rsa-3.1.4.tar.gz"
-    sha256 "e2b0b05936c276b1edd2e1525553233b666df9e29b5c3ba223eed738277c82a0"
+    url "https://pypi.python.org/packages/source/r/rsa/rsa-3.2.3.tar.gz"
+    sha256 "14db288cc40d6339dedf60d7a47053ab004b4a8976a5c59402a211d8fc5bf21f"
   end
 
   def install
@@ -92,7 +84,7 @@ class Awscli < Formula
     zsh_completion.install "bin/aws_zsh_completer.sh" => "_aws"
 
     # Install the examples
-    (share+"awscli").install "awscli/examples"
+    pkgshare.install "awscli/examples"
 
     bin.install Dir[libexec/"bin/*"]
     bin.env_script_all_files(libexec+"bin", :PYTHONPATH => ENV["PYTHONPATH"])
@@ -113,7 +105,7 @@ class Awscli < Formula
       aws configure
 
     More information:
-      http://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
+      https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-getting-started.html
     EOS
   end
 

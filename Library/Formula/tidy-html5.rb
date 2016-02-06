@@ -1,14 +1,14 @@
 class TidyHtml5 < Formula
   desc "Granddaddy of HTML tools, with support for modern standards"
   homepage "http://www.html-tidy.org/"
-  url "https://github.com/htacg/tidy-html5/archive/4.9.26.tar.gz"
-  sha256 "28674745db53b6ef1aa4b8466e6e231915dcd596672ec40515d0ab53ee0c33f6"
+  url "https://github.com/htacg/tidy-html5/archive/5.1.25.tar.gz"
+  sha256 "be81e967537984fbd207b4b19d02e7be73cbf201f07bf55aa5560c9b1d19b106"
 
   bottle do
     cellar :any
-    sha256 "644d4035a1053472993ebd51cf34d88a69521d2e5beb8ed1825f4bcb6ff796f2" => :yosemite
-    sha256 "46abf4003c6a17b84241ef891db85b7e5f933bd361f4834d0e15cef1c809aed8" => :mavericks
-    sha256 "a465e80047d5172210e366b34acc7f0f0d251969df46b3f501b1550f53510ada" => :mountain_lion
+    sha256 "3d52b6ac9577c6ab77fcb9b1328abee5a47b8085d31c3f80a6cb3c28ae89c4c8" => :el_capitan
+    sha256 "7182786c41a39091b91370ee1445d37ad570ac7004ed248fb6948482d07cddef" => :yosemite
+    sha256 "d8d882a5472f72a63ed79794d4a587f1a9352ec5bd7555e529658325f66a1678" => :mavericks
   end
 
   depends_on "cmake" => :build
@@ -21,7 +21,7 @@ class TidyHtml5 < Formula
   end
 
   test do
-    output = pipe_output(bin/"tidy5 -q", "<!doctype html><title></title>")
+    output = pipe_output(bin/"tidy -q", "<!doctype html><title></title>")
     assert_match /^<!DOCTYPE html>/, output
     assert_match /HTML Tidy for HTML5/, output
   end

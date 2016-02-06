@@ -1,20 +1,19 @@
 class Rethinkdb < Formula
-  desc "Distributed database"
-  homepage "http://www.rethinkdb.com/"
-  url "http://download.rethinkdb.com/dist/rethinkdb-2.0.2.tgz"
-  sha1 "8f5b6d30fb5608d726b10b6f1256228c0cd940f0"
+  desc "The open-source database for the realtime web"
+  homepage "https://www.rethinkdb.com/"
+  url "https://download.rethinkdb.com/dist/rethinkdb-2.2.4.tgz"
+  sha256 "3562816790b408cd1b8e261363b9c2a588f6be776e2e5c0baa3be7acce3b407f"
 
   bottle do
     cellar :any
-    sha256 "4fe0d45f38398110a1935801dc4383af7f5c4d5d91322927a9a79a6510729921" => :yosemite
-    sha256 "d4affc88c4fbe3498d376e2026cedafa4c645d4ba46935586b5dfc1607f2686c" => :mavericks
-    sha256 "09b1a3120e07943de1220a55f3ba7c4c8df1a1a57199d640e0924cd85c9f0489" => :mountain_lion
+    sha256 "9a44426ded399f7493f72d40cffb6105c8a25c862b0dcc065d6297f1c48651b7" => :el_capitan
+    sha256 "e7eb3f772fa730e7d3db490b6bd3e0d58bb0fa27c655fa2af5b84cbe9c93d54c" => :yosemite
+    sha256 "7dae0a78e19b834821b8cf18240449048d3cc4f7d95899e982f25251a6e1c1fa" => :mavericks
   end
 
   depends_on :macos => :lion
   depends_on "boost" => :build
   depends_on "openssl"
-  depends_on "icu4c"
 
   fails_with :gcc do
     build 5666 # GCC 4.2.1
@@ -32,7 +31,11 @@ class Rethinkdb < Formula
     system "make"
     system "make", "install-osx"
 
-    mkdir_p "#{var}/log/rethinkdb"
+    (var/"log/rethinkdb").mkpath
+
+    inreplace "packaging/assets/config/default.conf.sample",
+              /^# directory=.*/, "directory=#{var}/rethinkdb"
+    etc.install "packaging/assets/config/default.conf.sample" => "rethinkdb.conf"
   end
 
   def plist; <<-EOS.undent
@@ -45,8 +48,8 @@ class Rethinkdb < Formula
       <key>ProgramArguments</key>
       <array>
           <string>#{opt_bin}/rethinkdb</string>
-          <string>-d</string>
-          <string>#{var}/rethinkdb</string>
+          <string>--config-file</string>
+          <string>#{etc}/rethinkdb.conf</string>
       </array>
       <key>WorkingDirectory</key>
       <string>#{HOMEBREW_PREFIX}</string>

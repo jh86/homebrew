@@ -1,15 +1,14 @@
 class Libmagic < Formula
   desc "Implementation of the file(1) command"
   homepage "http://www.darwinsys.com/file/"
-  url "ftp://ftp.astron.com/pub/file/file-5.22.tar.gz"
-  mirror "https://fossies.org/unix/misc/file-5.22.tar.gz"
-  sha256 "c4e3a8e44cb888c5e4b476e738503e37fb9de3b25a38c143e214bfc12109fc0b"
-  revision 1
+  url "ftp://ftp.astron.com/pub/file/file-5.25.tar.gz"
+  mirror "https://fossies.org/linux/misc/file-5.25.tar.gz"
+  sha256 "3735381563f69fb4239470b8c51b876a80425348b8285a7cded8b61d6b890eca"
 
   bottle do
-    sha256 "de4b3746d2a43085e5fde903f79f587d203e3bb6b7880554da3fc1c8d48fac18" => :yosemite
-    sha256 "70f2cd35ef919c70ca03daecd11ae89b22f05749aeee23d868f0a6a0a97ae4cc" => :mavericks
-    sha256 "de694310a07551fc96f7e285085c708b14e4d8e210878541eadd19e892fa5fd6" => :mountain_lion
+    sha256 "d3a6cdd08087e9b489335a0a8356e2e2fbff451f6a0e6a235fb9e85ad47db7d3" => :el_capitan
+    sha256 "e036124db97064c7dba5641c48b427f6932c66caebb5b4f708fe1f7651750483" => :yosemite
+    sha256 "11d5a175b69618acfb80aa5832f66afe57c7bb23b9487785ab8512eeedce860e" => :mavericks
   end
 
   option :universal

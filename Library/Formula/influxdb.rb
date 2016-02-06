@@ -1,186 +1,227 @@
-require "formula"
 require "language/go"
 
 class Influxdb < Formula
   desc "Time series, events, and metrics database"
-  homepage "http://influxdb.com"
-  url "https://s3.amazonaws.com/get.influxdb.org/influxdb-0.8.8.src.tar.gz"
-  sha1 "a5686d0374ec5ab616e335e9c5fb1aeacd17fb00"
+  homepage "https://influxdata.com/time-series-platform/influxdb/"
+  url "https://github.com/influxdata/influxdb/archive/v0.10.0.tar.gz"
+  sha256 "42a8410766047955084a25a98da0a914124081c7ab8b3d994e824063b3914f4a"
+
+  head "https://github.com/influxdata/influxdb.git"
 
   bottle do
-    cellar :any
-    revision 2
-    sha256 "bb246da9efb02f1dfaf3b401b1c6a5058de82081e4c31526228cb5fb486df787" => :yosemite
-    sha256 "abb2b857200ce69022981b8a7694f3fe4f24fadf905e3c6c3236a3a0ad946e7a" => :mavericks
-    sha256 "b3b3c081494c29f7fc0387d9e746732f3ac0cdaa480e891468b020ad5a3c9ed8" => :mountain_lion
-  end
-
-  devel do
-    url "https://github.com/influxdb/influxdb/archive/v0.9.0-rc31.tar.gz"
-    sha1 "f7f4768cd155f308fa68d0773eb0517625e038d1"
-    version "0.9.0-rc31"
+    cellar :any_skip_relocation
+    sha256 "7d902c71ad9d8119797da73561bd5b08a04e3195161a5e6be4bf0d839ca9229f" => :el_capitan
+    sha256 "3d1184f3728a366caf6d6dbcec982cb0c9d84ab1175446740def209f0ee46904" => :yosemite
+    sha256 "a116f0ec373391a63d8b3e4e4160cbf732835570128ceb835f086b51a19f95c4" => :mavericks
   end
 
   depends_on "go" => :build
-  depends_on :hg => :build
 
-  if build.stable?
-    depends_on "leveldb"
-    depends_on "rocksdb"
-    depends_on "autoconf" => :build
-    depends_on "protobuf" => :build
-    depends_on "bison" => :build
-    depends_on "flex" => :build
-    depends_on "gawk" => :build
-  else
-    go_resource "github.com/bmizerany/pat" do
-      url "https://github.com/bmizerany/pat.git", :revision => "b8a35001b773c267eb260a691f4e5499a3531600"
-    end
+  go_resource "collectd.org" do
+    url "https://github.com/collectd/go-collectd.git",
+    :revision => "9fc824c70f713ea0f058a07b49a4c563ef2a3b98"
+  end
 
-    go_resource "github.com/boltdb/bolt" do
-      url "https://github.com/boltdb/bolt.git", :revision => "8b138fd106636b40b4b6d43786e668ce658aa3d7"
-    end
+  go_resource "github.com/BurntSushi/toml" do
+    url "https://github.com/BurntSushi/toml.git",
+    :revision => "5c4df71dfe9ac89ef6287afc05e4c1b16ae65a1e"
+  end
 
-    go_resource "github.com/BurntSushi/toml" do
-      url "https://github.com/BurntSushi/toml.git", :revision => "443a628bc233f634a75bcbdd71fe5350789f1afa"
-    end
+  go_resource "github.com/armon/go-metrics" do
+    url "https://github.com/armon/go-metrics.git",
+    :revision => "345426c77237ece5dab0e1605c3e4b35c3f54757"
+  end
 
-    go_resource "github.com/kimor79/gollectd" do
-      url "https://github.com/kimor79/gollectd.git", :revision => "1d0fc88b7c2bf0ba79021ddca2b5f5fd9cc3a5a3"
-    end
+  go_resource "github.com/bmizerany/pat" do
+    url "https://github.com/bmizerany/pat.git",
+    :revision => "b8a35001b773c267eb260a691f4e5499a3531600"
+  end
 
-    go_resource "github.com/peterh/liner" do
-      url "https://github.com/peterh/liner.git", :revision => "fc147570057cd703778924569c41923b28611ca2"
-    end
+  go_resource "github.com/boltdb/bolt" do
+    url "https://github.com/boltdb/bolt.git",
+    :revision => "ee4a0888a9abe7eefe5a0992ca4cb06864839873"
+  end
 
-    go_resource "github.com/rakyll/statik" do
-      url "https://github.com/rakyll/statik.git", :revision => "4a16c831de16fd27a38fab90ade0cf35844a31db"
-    end
+  go_resource "github.com/davecgh/go-spew" do
+    url "https://github.com/davecgh/go-spew.git",
+    :revision => "5215b55f46b2b919f50a1df0eaa5886afe4e3b3d"
+  end
 
-    go_resource "golang.org/x/crypto" do
-      url "https://go.googlesource.com/crypto.git", :revision => "1351f936d976c60a0a48d728281922cf63eafb8d"
-    end
+  go_resource "github.com/dgryski/go-bits" do
+    url "https://github.com/dgryski/go-bits.git",
+    :revision => "86c69b3c986f9d40065df5bd8f765796549eef2e"
+  end
+
+  go_resource "github.com/dgryski/go-bitstream" do
+    url "https://github.com/dgryski/go-bitstream.git",
+    :revision => "27cd5973303fde7d914860be1ea4b927a6be0c92"
+  end
+
+  go_resource "github.com/gogo/protobuf" do
+    url "https://github.com/gogo/protobuf.git",
+    :revision => "82d16f734d6d871204a3feb1a73cb220cc92574c"
+  end
+
+  go_resource "github.com/golang/snappy" do
+    url "https://github.com/golang/snappy.git",
+    :revision => "1963d058044b19e16595f80d5050fa54e2070438"
+  end
+
+  go_resource "github.com/hashicorp/go-msgpack" do
+    url "https://github.com/hashicorp/go-msgpack.git",
+    :revision => "fa3f63826f7c23912c15263591e65d54d080b458"
+  end
+
+  go_resource "github.com/hashicorp/raft" do
+    url "https://github.com/hashicorp/raft.git",
+    :revision => "057b893fd996696719e98b6c44649ea14968c811"
+  end
+
+  go_resource "github.com/hashicorp/raft-boltdb" do
+    url "https://github.com/hashicorp/raft-boltdb.git",
+    :revision => "d1e82c1ec3f15ee991f7cc7ffd5b67ff6f5bbaee"
+  end
+
+  go_resource "github.com/influxdb/usage-client" do
+    url "https://github.com/influxdb/usage-client.git",
+    :revision => "475977e68d79883d9c8d67131c84e4241523f452"
+  end
+
+  go_resource "github.com/jwilder/encoding" do
+    url "https://github.com/jwilder/encoding.git",
+    :revision => "07d88d4f35eec497617bee0c7bfe651a796dae13"
+  end
+
+  go_resource "github.com/kimor79/gollectd" do
+    url "https://github.com/kimor79/gollectd.git",
+    :revision => "61d0deeb4ffcc167b2a1baa8efd72365692811bc"
+  end
+
+  go_resource "github.com/paulbellamy/ratecounter" do
+    url "https://github.com/paulbellamy/ratecounter.git",
+    :revision => "5a11f585a31379765c190c033b6ad39956584447"
+  end
+
+  go_resource "github.com/peterh/liner" do
+    url "https://github.com/peterh/liner.git",
+    :revision => "ad1edfd30321d8f006ccf05f1e0524adeb943060"
+  end
+
+  go_resource "github.com/rakyll/statik" do
+    url "https://github.com/rakyll/statik.git",
+    :revision => "274df120e9065bdd08eb1120e0375e3dc1ae8465"
+  end
+
+  go_resource "golang.org/x/crypto" do
+    url "https://go.googlesource.com/crypto.git",
+    :revision => "1f22c0103821b9390939b6776727195525381532"
+  end
+
+  go_resource "gopkg.in/fatih/pool.v2" do
+    url "https://gopkg.in/fatih/pool.v2.git",
+    :revision => "cba550ebf9bce999a02e963296d4bc7a486cb715"
   end
 
   def install
-    if build.stable?
-      ENV["GOPATH"] = buildpath
-      Dir.chdir File.join(buildpath, "src", "github.com", "influxdb", "influxdb")
+    ENV["GOPATH"] = buildpath
+    influxdb_path = buildpath/"src/github.com/influxdb/influxdb"
+    influxdb_path.install Dir["*"]
 
-      flex = Formula["flex"].bin/"flex"
-      bison = Formula["bison"].bin/"bison"
+    Language::Go.stage_deps resources, buildpath/"src"
 
-      inreplace "configure" do |s|
-        s.gsub! "echo -n", "$as_echo_n"
+    cd influxdb_path do
+      if build.head?
+        system "go", "install", "-ldflags", "-X main.version=0.10.1-HEAD -X main.branch=master -X main.commit=#{`git rev-parse HEAD`.strip}", "./..."
+      else
+        system "go", "install", "-ldflags", "-X main.version=0.10.0 -X main.branch=0.10.0 -X main.commit=b8bb32ecad9808ef00219e7d2469514890a0987a", "./..."
       end
-
-      system "./configure", "--with-flex=#{flex}", "--with-bison=#{bison}", "--with-rocksdb"
-      system "make", "parser", "protobuf"
-      system "go", "build", "-tags", "leveldb rocksdb", "-o", "influxdb", "github.com/influxdb/influxdb/daemon"
-
-      inreplace "config.sample.toml" do |s|
-        s.gsub! "/tmp/influxdb/development/db", "#{var}/influxdb/data"
-        s.gsub! "/tmp/influxdb/development/raft", "#{var}/influxdb/raft"
-        s.gsub! "/tmp/influxdb/development/wal", "#{var}/influxdb/wal"
-        s.gsub! "influxdb.log", "#{var}/influxdb/logs/influxdb.log"
-      end
-
-      bin.install "influxdb" => "influxdb"
-      etc.install "config.sample.toml" => "influxdb.conf"
-
-      (var/"influxdb/data").mkpath
-      (var/"influxdb/raft").mkpath
-    else
-      ENV["GOPATH"] = buildpath
-      influxdb_path = buildpath/"src/github.com/influxdb/influxdb"
-      influxdb_path.install Dir["*"]
-
-      Language::Go.stage_deps resources, buildpath/"src"
-
-      cd influxdb_path do
-        system "go", "install", "-ldflags", "-X main.version 0.9.0-rc31 -X main.commit 8ade485b5865e642b128a7cc6eb20c9da73d1b48", "./..."
-      end
-
-      inreplace influxdb_path/"etc/config.sample.toml" do |s|
-        s.gsub! "/var/opt/influxdb/db", "#{var}/influxdb/data"
-        s.gsub! "/var/opt/influxdb/raft", "#{var}/influxdb/raft"
-      end
-
-      bin.install buildpath/"bin/influxd" => "influxd"
-      bin.install buildpath/"bin/influx" => "influx"
-      etc.install influxdb_path/"etc/config.sample.toml" => "influxdb.conf"
-
-      (var/"influxdb/data").mkpath
-      (var/"influxdb/raft").mkpath
-      (var/"influxdb/state").mkpath
-      (var/"influxdb/logs").mkpath
     end
+
+    inreplace influxdb_path/"etc/config.sample.toml" do |s|
+      s.gsub! "/var/lib/influxdb/data", "#{var}/influxdb/data"
+      s.gsub! "/var/lib/influxdb/meta", "#{var}/influxdb/meta"
+      s.gsub! "/var/lib/influxdb/hh", "#{var}/influxdb/hh"
+      s.gsub! "/var/lib/influxdb/wal", "#{var}/influxdb/wal"
+    end
+
+    bin.install "bin/influxd"
+    bin.install "bin/influx"
+    etc.install influxdb_path/"etc/config.sample.toml" => "influxdb.conf"
+
+    (var/"influxdb/data").mkpath
+    (var/"influxdb/meta").mkpath
+    (var/"influxdb/hh").mkpath
+    (var/"influxdb/wal").mkpath
   end
 
-  if build.stable?
-    plist_options :manual => "influxdb -config=#{HOMEBREW_PREFIX}/etc/influxdb.conf"
+  plist_options :manual => "influxd -config #{HOMEBREW_PREFIX}/etc/influxdb.conf"
 
-    def plist; <<-EOS.undent
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
+  def plist; <<-EOS.undent
+    <?xml version="1.0" encoding="UTF-8"?>
+    <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+    <plist version="1.0">
+      <dict>
+        <key>KeepAlive</key>
         <dict>
-          <key>KeepAlive</key>
-          <dict>
-            <key>SuccessfulExit</key>
-            <false/>
-          </dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/influxdb</string>
-            <string>-config=#{HOMEBREW_PREFIX}/etc/influxdb.conf</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/influxdb.log</string>
-          <key>StandardOutPath</key>
-          <string>#{var}/log/influxdb.log</string>
+          <key>SuccessfulExit</key>
+          <false/>
         </dict>
-      </plist>
-      EOS
+        <key>Label</key>
+        <string>#{plist_name}</string>
+        <key>ProgramArguments</key>
+        <array>
+          <string>#{opt_bin}/influxd</string>
+          <string>-config</string>
+          <string>#{HOMEBREW_PREFIX}/etc/influxdb.conf</string>
+        </array>
+        <key>RunAtLoad</key>
+        <true/>
+        <key>WorkingDirectory</key>
+        <string>#{var}</string>
+        <key>StandardErrorPath</key>
+        <string>#{var}/log/influxdb.log</string>
+        <key>StandardOutPath</key>
+        <string>#{var}/log/influxdb.log</string>
+        <key>SoftResourceLimits</key>
+        <dict>
+          <key>NumberOfFiles</key>
+          <integer>10240</integer>
+        </dict>
+      </dict>
+    </plist>
+    EOS
+  end
+
+  def caveats; <<-EOS.undent
+    Config files from old InfluxDB versions are incompatible with version 0.9.
+    If upgrading from a pre-0.9 version, the new configuration file will be named:
+        #{etc}/influxdb.conf.default
+    To generate a new config file:
+        influxd config > influxdb.conf.generated
+    EOS
+  end
+
+  test do
+    (testpath/"config.toml").write shell_output("influxd config")
+    inreplace testpath/"config.toml" do |s|
+      s.gsub! %r{/.*/.influxdb/data}, "#{testpath}/influxdb/data"
+      s.gsub! %r{/.*/.influxdb/meta}, "#{testpath}/influxdb/meta"
+      s.gsub! %r{/.*/.influxdb/hh}, "#{testpath}/influxdb/hh"
+      s.gsub! %r{/.*/.influxdb/wal}, "#{testpath}/influxdb/wal"
     end
-  else
-    plist_options :manual => "influxd -config #{HOMEBREW_PREFIX}/etc/influxdb.conf"
 
-    def plist; <<-EOS.undent
-      <?xml version="1.0" encoding="UTF-8"?>
-      <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
-      <plist version="1.0">
-        <dict>
-          <key>KeepAlive</key>
-          <dict>
-            <key>SuccessfulExit</key>
-            <false/>
-          </dict>
-          <key>Label</key>
-          <string>#{plist_name}</string>
-          <key>ProgramArguments</key>
-          <array>
-            <string>#{opt_bin}/influxd</string>
-            <string>-config</string>
-            <string>#{HOMEBREW_PREFIX}/etc/influxdb.conf</string>
-          </array>
-          <key>RunAtLoad</key>
-          <true/>
-          <key>WorkingDirectory</key>
-          <string>#{var}</string>
-          <key>StandardErrorPath</key>
-          <string>#{var}/log/influxdb.log</string>
-          <key>StandardOutPath</key>
-          <string>#{var}/log/influxdb.log</string>
-        </dict>
-      </plist>
-      EOS
+    pid = fork do
+      exec "#{bin}/influxd -config #{testpath}/config.toml"
+    end
+    sleep 5
+
+    begin
+      output = shell_output("curl -Is localhost:8086/ping")
+      sleep 2
+      assert_match /X-Influxdb-Version:/, output
+    ensure
+      Process.kill("SIGINT", pid)
+      Process.wait(pid)
     end
   end
 end

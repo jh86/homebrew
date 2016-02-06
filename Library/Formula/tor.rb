@@ -1,21 +1,14 @@
 class Tor < Formula
   desc "Anonymizing overlay network for TCP"
   homepage "https://www.torproject.org/"
-  url "https://dist.torproject.org/tor-0.2.6.8.tar.gz"
-  mirror "https://tor.eff.org/dist/tor-0.2.6.8.tar.gz"
-  sha256 "b88b363896454250c3f561b0b48479f18295c93596d2e81baa10c5a3ae609a76"
+  url "https://dist.torproject.org/tor-0.2.7.6.tar.gz"
+  mirror "https://tor.eff.org/dist/tor-0.2.7.6.tar.gz"
+  sha256 "493a8679f904503048114aca6467faef56861206bab8283d858f37141d95105d"
 
   bottle do
-    sha256 "8e951125ab8ccec4f75f042f07bded3b08c4c970b84d84a6962249b7290ba86d" => :yosemite
-    sha256 "4e99238ca821986b63c7b524774c9173ad8b9f0e5075266f9fe254ff0103b0a9" => :mavericks
-    sha256 "a0316b566f6214a0b476f916c8810375bf964844d622512f3faf1ad68bac5ed9" => :mountain_lion
-  end
-
-  devel do
-    url "https://dist.torproject.org/tor-0.2.7.1-alpha.tar.gz"
-    mirror "https://tor.eff.org/dist/tor-0.2.7.1-alpha.tar.gz"
-    sha256 "9afc770a5a795e752f053ae7c2c1ee3a560145adc0aea377c83e602c2cbbed9b"
-    version "0.2.7.1-alpha"
+    sha256 "32bb77890419cef8b2152e9a6cd554b71021baa64d3dac8fc8d48d7d24d51e99" => :el_capitan
+    sha256 "a3edf9af56c01b70f582ca4d4ddb552274b876db7922c0494407804f3877975b" => :yosemite
+    sha256 "595d64e121de2417e647d5c8a1d0051d5a3e3de9c0e15429134c5dd494459573" => :mavericks
   end
 
   depends_on "libevent"
@@ -41,8 +34,20 @@ class Tor < Formula
     system "make", "install"
   end
 
+  def caveats; <<-EOS.undent
+    You will find a sample `torrc` file in #{etc}/tor.
+    It is advisable to edit the sample `torrc` to suit
+    your own security needs:
+      https://www.torproject.org/docs/faq#torrc
+    After editing the `torrc` you need to restart tor.
+    EOS
+  end
+
   test do
-    system bin/"tor", "--version"
+    pipe_output("script -q /dev/null #{bin}/tor-gencert --create-identity-key", "passwd\npasswd\n")
+    assert (testpath/"authority_certificate").exist?
+    assert (testpath/"authority_signing_key").exist?
+    assert (testpath/"authority_identity_key").exist?
   end
 
   def plist; <<-EOS.undent
@@ -62,17 +67,12 @@ class Tor < Formula
         </array>
         <key>WorkingDirectory</key>
         <string>#{HOMEBREW_PREFIX}</string>
+        <key>StandardErrorPath</key>
+        <string>#{var}/log/tor.log</string>
+        <key>StandardOutPath</key>
+        <string>#{var}/log/tor.log</string>
       </dict>
     </plist>
-    EOS
-  end
-
-  def caveats; <<-EOS.undent
-    You will find a sample `torrc` file in #{etc}/tor.
-    It is advisable to edit the sample `torrc` to suit
-    your own security needs:
-      https://www.torproject.org/docs/faq#torrc
-    After editing the `torrc` you need to restart tor.
     EOS
   end
 end

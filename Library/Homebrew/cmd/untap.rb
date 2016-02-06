@@ -1,29 +1,13 @@
-require 'cmd/tap' # for tap_args
+require "tap"
 
 module Homebrew
   def untap
     raise "Usage is `brew untap <tap-name>`" if ARGV.empty?
 
-    ARGV.each do |tapname|
-      user, repo = tap_args(tapname)
-
-      # We consistently downcase in tap to ensure we are not bitten by
-      # case-insensitive filesystem issues, which is the default on mac. The
-      # problem being the filesystem cares, but our regexps don't. So unless we
-      # resolve *every* path we will get bitten.
-      user.downcase!
-      repo.downcase!
-
-      tapd = HOMEBREW_LIBRARY/"Taps/#{user}/homebrew-#{repo}"
-
-      raise "No such tap!" unless tapd.directory?
-      puts "Untapping #{tapname}... (#{tapd.abv})"
-
-      files = []
-      tapd.find_formula { |file| files << file }
-      tapd.rmtree
-      tapd.dirname.rmdir_if_possible
-      puts "Untapped #{files.length} formula#{plural(files.length, 'e')}"
+    ARGV.named.each do |tapname|
+      tap = Tap.fetch(tapname)
+      raise "Homebrew/homebrew is not allowed" if tap.core_formula_repository?
+      tap.uninstall
     end
   end
 end

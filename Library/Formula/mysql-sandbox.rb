@@ -1,23 +1,30 @@
-require "formula"
-
 class MysqlSandbox < Formula
   desc "Install one or more MySQL servers"
   homepage "http://mysqlsandbox.net"
-  url "https://launchpadlibrarian.net/187745286/MySQL-Sandbox-3.0.47.tar.gz"
-  sha1 "1759c08c5b7d272b718178bbb7dbc0f52bcb429d"
+  url "https://github.com/datacharmer/mysql-sandbox/releases/download/3.1.05/MySQL-Sandbox-3.1.05.tar.gz"
+  sha256 "0d0ffbe2c31574bd7e3dd8e10fa01440d34d5cc768243409e75b66971e8f9c75"
+  head "https://github.com/datacharmer/mysql-sandbox.git"
 
   bottle do
-    sha1 "897c13c030850fae4ea21698c38f214f1d4e1609" => :yosemite
-    sha1 "2ce186a294c8e76d673d65dadd5a09a978f62f56" => :mavericks
-    sha1 "027b0af0c13bc153323fd46f9492635c265bd4a3" => :mountain_lion
+    cellar :any_skip_relocation
+    sha256 "80088acc66e7ab210d452e78a8d33bfef4edc70616647b2159355a4629282123" => :el_capitan
+    sha256 "233476fc5143899aca3763ac7588902e9424c5fff829417ccf7d9200b5e6aea0" => :yosemite
+    sha256 "4a9798abe3d89ac7d540ed6ed88b063dd4af82cba417a31375626c00198c5eae" => :mavericks
   end
 
   def install
-    ENV.prepend_create_path "PERL5LIB", "#{HOMEBREW_PREFIX}/lib/perl5/site_perl"
+    ENV.delete "PERL_MM_OPT"
+    ENV["PERL_LIBDIR"] = libexec/"lib/perl5"
+    ENV.prepend_create_path "PERL5LIB", libexec/"lib/perl5/site_perl/"
 
-    system "perl", "Makefile.PL", "PREFIX=#{prefix}"
+    system "perl", "Makefile.PL", "PREFIX=#{libexec}"
     system "make", "test", "install"
 
+    bin.install Dir["#{libexec}/bin/*"]
     bin.env_script_all_files(libexec+"bin", :PERL5LIB => ENV["PERL5LIB"])
+  end
+
+  test do
+    assert_match version.to_s, shell_output("#{bin}/msandbox", 1)
   end
 end

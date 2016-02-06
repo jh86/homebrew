@@ -1,15 +1,15 @@
 class Monit < Formula
   desc "Manage and monitor processes, files, directories, and devices"
   homepage "https://mmonit.com/monit/"
-  url "https://mmonit.com/monit/dist/monit-5.13.tar.gz"
-  mirror "https://mirrors.kernel.org/debian/pool/main/m/monit/monit_5.13.orig.tar.gz"
-  sha256 "9abae036f3be93a19c6b476ecd106b29d4da755bbc05f0a323e882eab6b2c5a9"
+  url "https://mmonit.com/monit/dist/monit-5.16.tar.gz"
+  mirror "https://mirrors.ocf.berkeley.edu/debian/pool/main//m/monit/monit_5.16.orig.tar.gz"
+  sha256 "5b998e796113ce244c8b575da09d3a62bac1b2765484fe6416f224b4ba8f391f"
 
   bottle do
     cellar :any
-    sha256 "ce255e89c6e847c00dcc1fd1247dc43a31cd29de103290b138426c27e446b423" => :yosemite
-    sha256 "6cba93db1219233a1bec863b7466e23004cb41dd0ce20f9c753e0a6e0a887fce" => :mavericks
-    sha256 "fe344102f73c8a8135c00ada216505040302e29f261becd8d22b4ad6b1dd0438" => :mountain_lion
+    sha256 "ee0e3cdb4adb127fd2c915168e5478701977294e4135e92dfbe3a6a194afb145" => :el_capitan
+    sha256 "c1b3dc5c143ae8899ca903c47c44e06f1e968f0c2cf76229ce002ac2aedf6583" => :yosemite
+    sha256 "0077fd5e20697c81abba44ba88b5c16a23100e79a52209accb0409747ffe21c1" => :mavericks
   end
 
   depends_on "openssl"
@@ -17,7 +17,8 @@ class Monit < Formula
   def install
     system "./configure", "--prefix=#{prefix}",
                           "--localstatedir=#{var}/monit",
-                          "--sysconfdir=#{etc}/monit"
+                          "--sysconfdir=#{etc}/monit",
+                          "--with-ssl-dir=#{Formula["openssl"].opt_prefix}"
     system "make", "install"
     (share/"monit").install "monitrc"
   end

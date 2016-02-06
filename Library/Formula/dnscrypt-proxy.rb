@@ -1,14 +1,14 @@
 class DnscryptProxy < Formula
   desc "Secure communications between a client and a DNS resolver"
-  homepage "http://dnscrypt.org"
-  url "https://github.com/jedisct1/dnscrypt-proxy/releases/download/1.4.3/dnscrypt-proxy-1.4.3.tar.gz"
-  mirror "http://download.dnscrypt.org/dnscrypt-proxy/dnscrypt-proxy-1.4.3.tar.gz"
-  sha256 "f10f10c18e25ced3c5ec5d0c4145d33270f9cfa991fd1b18d5d9af00e4d9b68e"
+  homepage "https://dnscrypt.org"
+  url "https://github.com/jedisct1/dnscrypt-proxy/releases/download/1.6.1/dnscrypt-proxy-1.6.1.tar.bz2"
+  mirror "https://download.dnscrypt.org/dnscrypt-proxy/dnscrypt-proxy-1.6.1.tar.bz2"
+  sha256 "895ac36f5d4898dabf0ed65e0a579d0aa4d9a9be9cca4dca7b573a0ff170919a"
 
   bottle do
-    sha1 "33cb7a65e5ddd861e679a65dcfe9530e3c531b43" => :yosemite
-    sha1 "579e4e3835a617db90740e6bc70834561e2f240b" => :mavericks
-    sha1 "2896d20fc0671986aff1e774fdd419f9e5562b8f" => :mountain_lion
+    sha256 "c089de06f984630d2300f898688dec2a514d072508ff23070ae15d1fde1eca99" => :el_capitan
+    sha256 "2b1f3f19d36ad59322979b673cb9a4f7a79c01601dfb2748884ee92148cccc0b" => :yosemite
+    sha256 "5542541954544fec6589553bfcb0c6dd6a35b3878874994364361f393ad5246d" => :mavericks
   end
 
   head do
@@ -20,49 +20,87 @@ class DnscryptProxy < Formula
   end
 
   option "with-plugins", "Support plugins and install example plugins."
+
   deprecated_option "plugins" => "with-plugins"
 
   depends_on "libsodium"
+  depends_on "minisign" => :recommended
 
   def install
     system "autoreconf", "-if" if build.head?
 
-    args = ["--disable-dependency-tracking", "--prefix=#{prefix}"]
+    args = %W[--disable-dependency-tracking --prefix=#{prefix}]
+
     if build.with? "plugins"
       args << "--enable-plugins"
       args << "--enable-relaxed-plugins-permissions"
       args << "--enable-plugins-root"
     end
+
     system "./configure", *args
     system "make", "install"
+
+    if build.with? "minisign"
+      (bin/"dnscrypt-update-resolvers").write <<-EOS.undent
+        #!/bin/sh
+        RESOLVERS_UPDATES_BASE_URL=https://download.dnscrypt.org/dnscrypt-proxy
+        RESOLVERS_LIST_BASE_DIR=#{pkgshare}
+        RESOLVERS_LIST_PUBLIC_KEY="RWQf6LRCGA9i53mlYecO4IzT51TGPpvWucNSCh1CBM0QTaLn73Y7GFO3"
+
+        curl -L --max-redirs 5 -4 -m 30 --connect-timeout 30 -s \
+          "${RESOLVERS_UPDATES_BASE_URL}/dnscrypt-resolvers.csv" > \
+          "${RESOLVERS_LIST_BASE_DIR}/dnscrypt-resolvers.csv.tmp" && \
+        curl -L --max-redirs 5 -4 -m 30 --connect-timeout 30 -s \
+          "${RESOLVERS_UPDATES_BASE_URL}/dnscrypt-resolvers.csv.minisig" > \
+          "${RESOLVERS_LIST_BASE_DIR}/dnscrypt-resolvers.csv.minisig" && \
+        minisign -Vm ${RESOLVERS_LIST_BASE_DIR}/dnscrypt-resolvers.csv.tmp \
+          -x "${RESOLVERS_LIST_BASE_DIR}/dnscrypt-resolvers.csv.minisig" \
+          -P "$RESOLVERS_LIST_PUBLIC_KEY" -q && \
+        mv -f ${RESOLVERS_LIST_BASE_DIR}/dnscrypt-resolvers.csv.tmp \
+          ${RESOLVERS_LIST_BASE_DIR}/dnscrypt-resolvers.csv
+      EOS
+      chmod 0775, bin/"dnscrypt-update-resolvers"
+    end
   end
 
-  def caveats; <<-EOS.undent
-    After starting dnscrypt-proxy, you will need to point your
-    local DNS server to 127.0.0.1. You can do this by going to
-    System Preferences > "Network" and clicking the "Advanced..."
-    button for your interface. You will see a "DNS" tab where you
-    can click "+" and enter 127.0.0.1 in the "DNS Servers" section.
+  def post_install
+    return if build.without? "minisign"
 
-    By default, dnscrypt-proxy runs on localhost (127.0.0.1), port 53,
-    and under the "nobody" user using the default OpenDNS DNSCrypt-enabled
-    resolver. If you would like to change these settings (e.g., switching to
-    a DNSCrypt-enabled resolver with DNSSEC support), you will have to edit the
-    plist file (e.g., --resolver-address, --provider-name, --provider-key, etc.)
+    system bin/"dnscrypt-update-resolvers"
+  end
 
-    To check that dnscrypt-proxy is working correctly, open Terminal and enter the
-    following command:
+  def caveats
+    s = <<-EOS.undent
+      After starting dnscrypt-proxy, you will need to point your
+      local DNS server to 127.0.0.1. You can do this by going to
+      System Preferences > "Network" and clicking the "Advanced..."
+      button for your interface. You will see a "DNS" tab where you
+      can click "+" and enter 127.0.0.1 in the "DNS Servers" section.
 
-        dig txt debug.opendns.com
+      By default, dnscrypt-proxy runs on localhost (127.0.0.1), port 53,
+      and under the "nobody" user using the dnscrypt.eu-dk DNSCrypt-enabled
+      resolver. If you would like to change these settings, you will have to edit
+      the plist file (e.g., --resolver-address, --provider-name, --provider-key, etc.)
 
-    You should see a line in the result that looks like this:
+      To check that dnscrypt-proxy is working correctly, open Terminal and enter the
+      following command. Replace en1 with whatever network interface you're using:
 
-        debug.opendns.com.	0	IN	TXT	"dnscrypt enabled (......)"
+          sudo tcpdump -i en1 -vvv 'port 443'
 
-    Note: This will only work if you are using the default OpenDNS DNSCrypt-enabled
-    resolver. If you are using a different resolver, you can use a tool like tcpdump
-    to verify that everything is working correctly.
+      You should see a line in the result that looks like this:
+
+          resolver2.dnscrypt.eu.https
     EOS
+
+    if build.with? "minisign"
+      s += <<-EOS.undent
+
+        If at some point the resolver file gets outdated, it can be updated to the
+        latest version by running: #{opt_bin}/dnscrypt-update-resolvers
+      EOS
+    end
+
+    s
   end
 
   plist_options :startup => true
@@ -81,8 +119,10 @@ class DnscryptProxy < Formula
         <key>ProgramArguments</key>
         <array>
           <string>#{opt_sbin}/dnscrypt-proxy</string>
+          <string>--ephemeral-keys</string>
+          <string>--resolvers-list=#{opt_pkgshare}/dnscrypt-resolvers.csv</string>
+          <string>--resolver-name=dnscrypt.eu-dk</string>
           <string>--user=nobody</string>
-          <string>--resolver-name=opendns</string>
         </array>
         <key>UserName</key>
         <string>root</string>

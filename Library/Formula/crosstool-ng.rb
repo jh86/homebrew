@@ -1,46 +1,31 @@
-require 'formula'
-
 class CrosstoolNg < Formula
   desc "Tool for building toolchains"
-  homepage 'http://crosstool-ng.org'
-  url 'http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.20.0.tar.bz2'
-  sha1 'b11f7ee706753b8cf822f98b549f8ab9dd8da9c7'
+  homepage "http://crosstool-ng.org"
+  url "http://crosstool-ng.org/download/crosstool-ng/crosstool-ng-1.22.0.tar.xz"
+  sha256 "a8b50ddb6e651c3eec990de54bd191f7b8eb88cd4f88be9338f7ae01639b3fba"
 
   bottle do
-    cellar :any
-    sha1 "e0b4f5c33aea34c2c94cfbbb71b9e238ab5262c9" => :yosemite
-    sha1 "dc3c1243bb2df823e0db44562e6dc2b869f0a3b1" => :mavericks
-    sha1 "fc2cfb94d4edb31624c5703c07e536e7becb2fa0" => :mountain_lion
+    cellar :any_skip_relocation
+    sha256 "0bb96bf1f53301c76335fd1c3a82f326d35c379a96300e1cf6a16cd921d4a77d" => :el_capitan
+    sha256 "f90f1e7a0ad37de323a0b3ec6693db6efd1a3f9cedb7774ce3e92f04a25b4058" => :yosemite
+    sha256 "19be1947001313166d0bb0b2a223f9f3221b341d1aab90fce5d005713b7a5a49" => :mavericks
   end
 
   depends_on "autoconf" => :build
   depends_on "automake" => :build
   depends_on "libtool" => :build
-  depends_on 'coreutils' => :build
-  depends_on 'wget'
-  depends_on 'gnu-sed'
-  depends_on 'gawk'
-  depends_on 'binutils'
-  depends_on 'libelf'
-  depends_on 'homebrew/dupes/grep' => :optional
-  depends_on 'homebrew/dupes/make' => :optional
+  depends_on "coreutils" => :build
+  depends_on "help2man" => :build
+  depends_on "wget"
+  depends_on "gnu-sed"
+  depends_on "gawk"
+  depends_on "binutils"
+  depends_on "libelf"
+  depends_on "homebrew/dupes/grep" => :optional
+  depends_on "homebrew/dupes/make" => :optional
 
   # Avoid superenv to prevent https://github.com/mxcl/homebrew/pull/10552#issuecomment-9736248
   env :std
-
-  # Patch to fix clang offsetof. Can be removed when adopted upstream.
-  # http://patchwork.ozlabs.org/patch/400328/
-  patch do
-    url "http://patchwork.ozlabs.org/patch/400328/raw/"
-    sha1 "0baca77c863e6876f6fb1838db9e5cb60c6fe89c"
-  end
-
-  # Patch to make regex BSD grep compatible. Can be removed when adopted upstream.
-  # http://patchwork.ozlabs.org/patch/400351/
-  patch do
-    url "http://patchwork.ozlabs.org/patch/400351/raw/"
-    sha1 "8f8e29aa149e65c2588a2d9ec3849d0ba727e0ad"
-  end
 
   def install
     args = ["--prefix=#{prefix}",
@@ -52,11 +37,12 @@ class CrosstoolNg < Formula
             "--with-libtoolize=glibtoolize",
             "--with-install=ginstall",
             "--with-sed=gsed",
-            "--with-awk=gawk"]
+            "--with-awk=gawk",
+           ]
 
     args << "--with-grep=ggrep" if build.with? "grep"
 
-    args << "--with-make=gmake" if build.with? "make"
+    args << "--with-make=#{Formula["make"].opt_bin}/gmake" if build.with? "make"
 
     args << "CFLAGS=-std=gnu89"
 
@@ -64,7 +50,7 @@ class CrosstoolNg < Formula
 
     # Must be done in two steps
     system "make"
-    system "make install"
+    system "make", "install"
   end
 
   def caveats; <<-EOS.undent
@@ -76,4 +62,3 @@ class CrosstoolNg < Formula
     system "#{bin}/ct-ng", "version"
   end
 end
-

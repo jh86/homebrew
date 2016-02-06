@@ -1,13 +1,13 @@
 class Libgit2Glib < Formula
   desc "Glib wrapper library around libgit2 git access library"
   homepage "https://github.com/GNOME/libgit2-glib"
-  url "http://ftp.gnome.org/pub/GNOME/sources/libgit2-glib/0.22/libgit2-glib-0.22.0.tar.xz"
-  sha256 "8ae19e1dd2a6b37dd81843182d96dc5f8d439013c26658670a08287abfedaee2"
+  url "https://download.gnome.org/sources/libgit2-glib/0.23/libgit2-glib-0.23.10.tar.xz"
+  sha256 "398ea6ff5fb1eafa61f2908da5ff8722dc051a2081be6cbed76a2ab07ecab1af"
 
   bottle do
-    sha1 "81334d37f1176a974f3c09534de672f980c407a7" => :yosemite
-    sha1 "b9a9dcc91c8273ead34e39e84bd31e895cfd7325" => :mavericks
-    sha1 "0bac1671876c4e38a8a2899661cab44afcdaf051" => :mountain_lion
+    sha256 "e1707622fa3434b1bec14221080022534fa830f6eaf9ecc97581e39ce4460dcf" => :el_capitan
+    sha256 "a7cfb651228710cfb4188580a0b13a9e3e09d2c7c0fd6be43175f121f7d3bae8" => :yosemite
+    sha256 "5eec43959952f6105784cae5afeefa93666c2d2c37b535e7d26e87403a35fcdb" => :mavericks
   end
 
   head do
@@ -46,8 +46,7 @@ class Libgit2Glib < Formula
   end
 
   test do
-    mkdir "horatio"
-    cd "horatio" do
+    mkdir "horatio" do
       system "git", "init"
     end
     system "#{libexec}/general", testpath/"horatio"

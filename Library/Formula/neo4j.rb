@@ -1,24 +1,17 @@
-require "formula"
-
 class Neo4j < Formula
   desc "Robust (fully ACID) transactional property graph database"
-  homepage "http://neo4j.org"
-  url "http://dist.neo4j.org/neo4j-community-2.2.2-unix.tar.gz"
-  sha1 "b5b12d7815ffa7d232c29d0021b5d8629c243073"
-  version "2.2.2"
-
-  option "with-neo4j-shell-tools", "Add neo4j-shell-tools to the standard neo4j-shell"
-
-  resource "neo4j-shell-tools" do
-    url "http://dist.neo4j.org/jexp/shell/neo4j-shell-tools_2.2.zip"
-    sha1 "5c1d4d46660149291ca4f484591c25c25be82c5b"
-  end
+  homepage "http://neo4j.com"
+  url "http://dist.neo4j.org/neo4j-community-2.3.2-unix.tar.gz"
+  version "2.3.2"
+  sha256 "37e24d95c914c54d5cbbe99473d4beef89da78adb2db04eb87258a489225932a"
 
   devel do
-    url "http://dist.neo4j.org/neo4j-community-2.3.0-M02-unix.tar.gz"
-    sha1 "1bcdc0272bad230314d827cea7c8279b5f7ab4b0"
-    version "2.3.0-M02"
+    url "http://dist.neo4j.org/neo4j-community-3.0.0-M02-unix.tar.gz"
+    sha256 "2a20f420e94fe4189363ce8ab327c0e5e054df3fc74a0249e9e2c7fe0455a0d6"
+    version "3.0.0-M02"
   end
+
+  bottle :unneeded
 
   def install
     # Remove windows files
@@ -30,20 +23,12 @@ class Neo4j < Formula
     # Symlink binaries
     bin.install_symlink Dir["#{libexec}/bin/neo4j{,-shell,-import}"]
 
-    # Eventually, install neo4j-shell-tools
-    # omiting "opencsv-2.3.jar" because it already comes with neo4j (see libexec/lib)
-    if build.with? "neo4j-shell-tools"
-      resource("neo4j-shell-tools").stage {
-        (libexec/"lib").install "geoff-0.5.0.jar", "import-tools-2.2.jar", "mapdb-0.9.3.jar"
-      }
-    end
-
     # Adjust UDC props
-    open("#{libexec}/conf/neo4j-wrapper.conf", "a") { |f|
+    open("#{libexec}/conf/neo4j-wrapper.conf", "a") do |f|
       f.puts "wrapper.java.additional.4=-Dneo4j.ext.udc.source=homebrew"
 
       # suppress the empty, focus-stealing java gui
       f.puts "wrapper.java.additional=-Djava.awt.headless=true"
-    }
+    end
   end
 end

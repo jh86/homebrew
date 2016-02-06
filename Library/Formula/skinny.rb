@@ -1,23 +1,10 @@
-require "formula"
-
-class UniversalNpm < Requirement
-  fatal true
-  satisfy { which("npm") }
-  def message
-    "npm is required. If you have installed node with `--without-npm` option, reinstall with `--with-npm`."
-  end
-end
-
 class Skinny < Formula
-  desc "Full-stack web app framework built on Scalatra"
+  desc "Full-stack web app framework in Scala"
   homepage "http://skinny-framework.org/"
-  url "https://github.com/skinny-framework/skinny-framework/releases/download/1.3.18/skinny-1.3.18.tar.gz"
-  sha1 "150fe1a5f010d0bba07491ed008d0797f8bd1f19"
+  url "https://github.com/skinny-framework/skinny-framework/releases/download/2.0.6/skinny-2.0.6.tar.gz"
+  sha256 "30d77ab22efd8dbf4d7b353eb90060ef32f61d71efd8f228451d6549d57675c0"
 
-  depends_on "node"
-  depends_on UniversalNpm
-
-  option "without-npm-generator", "Yeoman generator will not be installed"
+  bottle :unneeded
 
   def install
     libexec.install Dir["*"]
@@ -26,15 +13,6 @@ class Skinny < Formula
       export PATH=#{bin}:$PATH
       PREFIX="#{libexec}" exec "#{libexec}/skinny" "$@"
     EOS
-  end
-
-  def post_install
-    return if build.without? "npm-generator"
-
-    cd libexec
-    system "npm", "install", "yo"
-    ln_s libexec/"node_modules/yo/cli.js", bin/"yo"
-    system "npm", "install", "generator-skinny"
   end
 
   test do
